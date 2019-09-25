@@ -1,5 +1,5 @@
 {
-  "name": "reclamestal/hello-composer",
+  "name": "reclamestal/pdo-db-wrapper",
   "description": "Wrapper voor database communicatie voor de PDO class.",
   "type": "package",
   "require": {
