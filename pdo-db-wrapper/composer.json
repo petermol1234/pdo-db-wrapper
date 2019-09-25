@@ -1,0 +1,22 @@
+{
+  "name": "reclamestal/hello-composer",
+  "description": "Wrapper voor database communicatie voor de PDO class.",
+  "type": "package",
+  "require": {
+    "php": ">=5.1.0"
+  },
+  "license": "",
+  "authors": [
+    {
+      "name": "Peter Mol",
+      "email": "peter@reclamestal.nl",
+      "homepage": "https://reclamestal.nl"
+    }
+  ],
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "reclamestal\\PdoDbWrapper\\": "src/"
+    }
+  }
+}
