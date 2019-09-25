@@ -1,0 +1,14 @@
+{
+    "name": "reclamestal/pdo-db-wrapper",
+    "description": "Wrapper voor database communicatie voor de PDO class.",
+    "type": "library",
+    "license": "WTFPL",
+    "authors": [
+        {
+            "name": "Peter Mol",
+            "email": "peter@reclamestal.nl"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
