@@ -5,7 +5,7 @@
   "require": {
     "php": ">=5.1.0"
   },
-  "license": "",
+  "license": "WTFPL",
   "authors": [
     {
       "name": "Peter Mol",
