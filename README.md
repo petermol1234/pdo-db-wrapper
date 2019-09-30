@@ -34,7 +34,7 @@ $update = $db->update('table_name',['column'=>'newvalue']);
 $delete = $db->delete('table_name','column = :value',[':value'=>'value']);
 $run    = $db->run('SELECT * FROM ...',[':value'=>'value']);
 
-```
+````
 
 ## Version
 Current version 1.0.3
