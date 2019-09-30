@@ -2,16 +2,14 @@
 
 namespace reclamestal\PdoDbWrapper;
 
-class Db extends \PDO
-{
+class Db extends \PDO {
     private $error;
     private $sql;
     private $bind;
     private $errorCallbackFunction;
     private $errorMsgFormat;
 
-    public function __construct($dsn, $user = "", $passwd = "", $options = array())
-    {
+    public function __construct($dsn, $user = "", $passwd = "", $options = array()) {
         if (empty($options)) {
             $options = array(
                 \PDO::ATTR_PERSISTENT => false,
@@ -26,8 +24,7 @@ class Db extends \PDO
         }
     }
 
-    private function debug()
-    {
+    private function debug() {
         if (!empty($this->errorCallbackFunction)) {
             $error = array("Error" => $this->error);
             if (!empty($this->sql))
@@ -43,14 +40,15 @@ class Db extends \PDO
             }
             $msg = "";
             if ($this->errorMsgFormat == "html") {
-                if (!empty($error["Bind Parameters"]))
+                if (!empty($error["Bind Parameters"])) {
                     $error["Bind Parameters"] = "<pre>" . $error["Bind Parameters"] . "</pre>";
-                $css = trim(file_get_contents(dirname(__FILE__) . "/error.css"));
-                $msg .= '<style type="text/css">' . "\n" . $css . "\n</style>";
-                $msg .= "\n" . '<div class="db-error">' . "\n\t<h3>SQL Error</h3>";
-                foreach ($error as $key => $val)
-                    $msg .= "\n\t<label>" . $key . ":</label>" . $val;
-                $msg .= "\n\t</div>\n</div>";
+                }
+                $msg .= '<div><h3>SQL Error</h3><ul>';
+                foreach ($error as $key => $val) {
+                    $msg .= "<li>$key:$val</li>";
+                }
+                $msg .= '</ul></div>';
+                $msg .='<small>Generated on '.date("Y-m-d H:i:s").' - '.$_SERVER['REQUEST_URI'].'</small>';
             } elseif ($this->errorMsgFormat == "text") {
                 $msg .= "SQL Error\n" . str_repeat("-", 50);
                 foreach ($error as $key => $val)
@@ -61,14 +59,12 @@ class Db extends \PDO
         }
     }
 
-    public function delete($table, $where, $bind = "")
-    {
+    public function delete($table, $where, $bind = "") {
         $sql = "DELETE FROM " . $table . " WHERE " . $where . ";";
         return $this->run($sql, $bind);
     }
 
-    private function filter($table, $info)
-    {
+    private function filter($table, $info) {
         $driver = $this->getAttribute(\PDO::ATTR_DRIVER_NAME);
         if ($driver == 'sqlite') {
             $sql = "PRAGMA table_info('" . $table . "');";
@@ -89,8 +85,7 @@ class Db extends \PDO
         return array();
     }
 
-    private function cleanup($bind)
-    {
+    private function cleanup($bind) {
         if (!is_array($bind)) {
             if (!empty($bind))
                 $bind = array($bind);
@@ -102,8 +97,7 @@ class Db extends \PDO
         return $bind;
     }
 
-    public function insert($table, $info, $ignore = false)
-    {
+    public function insert($table, $info, $ignore = false) {
         $fields = $this->filter($table, $info);
         $sql = ($ignore ? "INSERT IGNORE" : "INSERT") . " INTO `" . $table . "` (`" . implode($fields, "`, `") . "`) VALUES (:" . implode($fields, ", :") . ");";
         $bind = array();
@@ -112,8 +106,7 @@ class Db extends \PDO
         return $this->run($sql, $bind);
     }
 
-    public function run($sql, $bind = "")
-    {
+    public function run($sql, $bind = "") {
         $this->sql = trim($sql);
         $this->bind = $this->cleanup($bind);
         $this->error = "";
@@ -132,8 +125,7 @@ class Db extends \PDO
         }
     }
 
-    public function select($tables, $where = "", $bind = "", $fields = "*", $extra = "")
-    {
+    public function select($tables, $where = "", $bind = "", $fields = "*", $extra = "") {
         $quotedTables = '`' . str_replace(',', '`,`', $tables) . '`';
         $sql = "SELECT " . $fields . " FROM $quotedTables";
         if (!empty($where))
@@ -142,9 +134,12 @@ class Db extends \PDO
         return $this->run($sql, $bind);
     }
 
-    public function setErrorCallbackFunction($errorCallbackFunction, $errorMsgFormat = "html")
-    {
-//Variable functions for won't work with language constructs such as echo and print, so these are replaced with print_r.
+    public function selectSingle($tables, $where = "", $bind = "", $fields = "*", $extra = "") {
+        $extra.= " LIMIT 1;";
+        return $this->select($tables,$where,$bind,$fields,$extra)[0];
+    }
+
+    public function setErrorCallbackFunction($errorCallbackFunction = "print_r", $errorMsgFormat = "html") {
         if (in_array(strtolower($errorCallbackFunction), array("echo", "print")))
             $errorCallbackFunction = "print_r";
         if (function_exists($errorCallbackFunction)) {
@@ -155,8 +150,7 @@ class Db extends \PDO
         }
     }
 
-    public function update($table, $info, $where, $bind = "")
-    {
+    public function update($table, $info, $where, $bind = "") {
         $fields = $this->filter($table, $info);
         $fieldSize = sizeof($fields);
         $sql = "UPDATE `" . $table . "` SET ";
